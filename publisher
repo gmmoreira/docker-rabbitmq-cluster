@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'bunny'
+end
+
+conn = Bunny.new('amqp://guest:guest@localhost:5678').tap(&:start)
+
+conn.with_channel do |ch|
+  begin
+    100.times do
+      ch
+        .default_exchange
+        .publish("Test message", routing_key: 'test.message')
+    end
+    $stdout.puts "Published all"
+    input = $stdin.gets
+  end until input == "q"
+end
+conn.close

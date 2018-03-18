@@ -1,0 +1,32 @@
+version: "3"
+services:
+  rabbit_1:
+    image: rabbitmq:3.6-management-alpine
+    hostname: rabbit_1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "ABC123"
+    volumes:
+      - "./rabbitmq_data/rabbit_1:/var/lib/rabbitmq"
+  rabbit_2:
+    image: rabbitmq:3.6-management-alpine
+    hostname: rabbit_2
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "ABC123"
+    volumes:
+      - "./rabbitmq_data/rabbit_2:/var/lib/rabbitmq"
+  rabbit_3:
+    image: rabbitmq:3.6-management-alpine
+    hostname: rabbit_3
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "ABC123"
+    volumes:
+      - "./rabbitmq_data/rabbit_3:/var/lib/rabbitmq"
+  haproxy:
+    image: haproxy:1.8-alpine
+    hostname: haproxy
+    volumes:
+      - "./haproxy:/usr/local/etc/haproxy:ro"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "9000:9000"

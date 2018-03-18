@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'bunny'
+end
+
+conn = Bunny.new('amqp://guest:guest@localhost:5678').tap(&:start)
+ch = conn.create_channel
+ch.prefetch(1)
+
+q = ch.queue('test.message', durable: true)
+q.subscribe(manual_ack: true) do |di, metadata, payload|
+  $stdout.puts("[#{Time.now}] #{payload}")
+  ch.ack(di.delivery_tag)
+  sleep 0.5
+end
+$stdout.puts "Consuming queue..."
+$stdin.gets
+conn.close
